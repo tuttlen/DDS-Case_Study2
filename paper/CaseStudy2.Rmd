@@ -60,7 +60,16 @@ aggregate(formula=circumference~Tree,data=Orange,FUN = median)
 ```{r Orange Circumference Against Age, echo=TRUE}
 colors<-c("blue","red","green","maroon","purple")
 
-# Sort the levels so we match the colors respectively between the two plots  
+OrderedOrange<- Orange[order(Orange$circumference),]
+# , OrderedOrange$DiffCircumference := C + shift(B)
+# c(NA, B[.I - 1]) 
+
+# Sort the levels so we match the colors respectively between the two plots 
+
+BaseDate <-as.Date("1968/12/31")
+#BaseDate <-as.POSIXct(as.Date("1968/12/31"), format = "%d/%m/%Y %I:%M:%S %p")
+
+Orange$TreeAge<- BaseDate+Orange$age
 
 levels(Orange$Tree) <-sort(levels(Orange$Tree))
 
@@ -71,6 +80,15 @@ levels(Orange$Tree) <-sort(levels(Orange$Tree))
 plot(Orange$circumference~Orange$age,
      pch= as.numeric(levels(Orange$Tree)),
      col=colors, xlab="Age (in days)",ylab="Circumference")
+
+OrderedOrange$GrowthRate <-mutate(OrderedOrange, D = lag(OrderedOrange$circumference )- OrderedOrange$circumference )$D
+OrderedOrange[is.na(OrderedOrange$GrowthRate)==TRUE,]$GrowthRate<-0
+levels(OrderedOrange$GrowthRate) <- c(min(OrderedOrange$GrowthRate):max(OrderedOrange$GrowthRate))
+OrderedOrange$GrowthRate
+
+plot(OrderedOrange$GrowthRate~OrderedOrange$age,
+     pch= as.numeric(levels(Orange$Tree)),
+     col=colors, xlab="Age (in days)",ylab="GR", type = 'l')
 
 # Create the legend for the trees.  
 legend("topleft",paste("Tree grp. " ,levels(Orange$Tree)),
@@ -85,6 +103,11 @@ legend("topleft",paste("Tree grp. " ,levels(Orange$Tree)),
 # Order the Orange data set by circumference
 
 OrderedOrange<- Orange[order(Orange$circumference),]
+# , OrderedOrange$DiffCircumference := C + shift(B)
+# c(NA, B[.I - 1]) 
+
+OrderedOrange$GrowthRate <-mutate(OrderedOrange, D = lag(OrderedOrange$circumference )- OrderedOrange$circumference )$D
+
 
 # Create a box plot of tree circumference for each of the category of trees
 
@@ -94,6 +117,11 @@ boxplot(OrderedOrange$circumference~OrderedOrange$Tree,data=OrderedOrange,
         names= paste("Tree grp. " ,levels(OrderedOrange$Tree)),
         pch=levels(OrderedOrange$Tree),col=colors)
 
+boxplot(OrderedOrange$GrowthRate~OrderedOrange$Tree,data=OrderedOrange, 
+        main="Orange Tree growth rate against Tree", 
+        xlab="Tree Groups", ylab="Rate",
+        names= paste("Tree grp. " ,levels(OrderedOrange$Tree)),
+        pch=levels(OrderedOrange$Tree),col=colors)
 ```
 
  

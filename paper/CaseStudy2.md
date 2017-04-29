@@ -51,7 +51,16 @@ Orange Tree Circumference against Age
 ``` r
 colors<-c("blue","red","green","maroon","purple")
 
-# Sort the levels so we match the colors respectively between the two plots  
+OrderedOrange<- Orange[order(Orange$circumference),]
+# , OrderedOrange$DiffCircumference := C + shift(B)
+# c(NA, B[.I - 1]) 
+
+# Sort the levels so we match the colors respectively between the two plots 
+
+BaseDate <-as.Date("1968/12/31")
+#BaseDate <-as.POSIXct(as.Date("1968/12/31"), format = "%d/%m/%Y %I:%M:%S %p")
+
+Orange$TreeAge<- BaseDate+Orange$age
 
 levels(Orange$Tree) <-sort(levels(Orange$Tree))
 
@@ -62,13 +71,35 @@ levels(Orange$Tree) <-sort(levels(Orange$Tree))
 plot(Orange$circumference~Orange$age,
      pch= as.numeric(levels(Orange$Tree)),
      col=colors, xlab="Age (in days)",ylab="Circumference")
+```
+
+![](CaseStudy2_files/figure-markdown_github/Orange%20Circumference%20Against%20Age-1.png)
+
+``` r
+OrderedOrange$GrowthRate <-mutate(OrderedOrange, D = lag(OrderedOrange$circumference )- OrderedOrange$circumference )$D
+OrderedOrange[is.na(OrderedOrange$GrowthRate)==TRUE,]$GrowthRate<-0
+levels(OrderedOrange$GrowthRate) <- c(min(OrderedOrange$GrowthRate):max(OrderedOrange$GrowthRate))
+OrderedOrange$GrowthRate
+```
+
+    ##  [1]   0   0   0  -2  -1 -16  -2  -7  -4  -7  -6  -6  -6 -21  -3  -1  -3
+    ## [18]   0  -5  -5 -14  -1  -2   0  -3 -11 -11  -5  -2  -3  -2 -24   0  -6
+    ## [35]  -5
+    ## attr(,"levels")
+    ##  [1] -24 -23 -22 -21 -20 -19 -18 -17 -16 -15 -14 -13 -12 -11 -10  -9  -8
+    ## [18]  -7  -6  -5  -4  -3  -2  -1   0
+
+``` r
+plot(OrderedOrange$GrowthRate~OrderedOrange$age,
+     pch= as.numeric(levels(Orange$Tree)),
+     col=colors, xlab="Age (in days)",ylab="GR", type = 'l')
 
 # Create the legend for the trees.  
 legend("topleft",paste("Tree grp. " ,levels(Orange$Tree)),
        pch=as.numeric(levels(Orange$Tree)),col=colors)
 ```
 
-![](CaseStudy2_files/figure-markdown_github/Orange%20Circumference%20Against%20Age-1.png)
+![](CaseStudy2_files/figure-markdown_github/Orange%20Circumference%20Against%20Age-2.png)
 
 #### At some point in the lifecycle of Tree group five (the highest maximum diameter group) the circumference dropped drammatically and the least maximum diameter group (Tree grp. 1) surpassed it greatly. Tree group five ended up being in the middle of the rank. The middle ranking group -Tree grp. 3- has the greatest circumference in the last data point.
 
@@ -78,6 +109,11 @@ legend("topleft",paste("Tree grp. " ,levels(Orange$Tree)),
 # Order the Orange data set by circumference
 
 OrderedOrange<- Orange[order(Orange$circumference),]
+# , OrderedOrange$DiffCircumference := C + shift(B)
+# c(NA, B[.I - 1]) 
+
+OrderedOrange$GrowthRate <-mutate(OrderedOrange, D = lag(OrderedOrange$circumference )- OrderedOrange$circumference )$D
+
 
 # Create a box plot of tree circumference for each of the category of trees
 
@@ -89,6 +125,16 @@ boxplot(OrderedOrange$circumference~OrderedOrange$Tree,data=OrderedOrange,
 ```
 
 ![](CaseStudy2_files/figure-markdown_github/Orange%20Circumference%20Over%20Group-1.png)
+
+``` r
+boxplot(OrderedOrange$GrowthRate~OrderedOrange$Tree,data=OrderedOrange, 
+        main="Orange Tree growth rate against Tree", 
+        xlab="Tree Groups", ylab="Rate",
+        names= paste("Tree grp. " ,levels(OrderedOrange$Tree)),
+        pch=levels(OrderedOrange$Tree),col=colors)
+```
+
+![](CaseStudy2_files/figure-markdown_github/Orange%20Circumference%20Over%20Group-2.png)
 
 ### 3i. Find the difference between the maximum and the minimum monthly average temperatures for each country and report/visualize top 20 countries with the maximum differences for the period since 1900.
 
@@ -229,7 +275,7 @@ ggplot(T20MinMaxTempLong, aes(x=Date, y=Monthly.AvgTemp, color=Min.Max)) +
 
 ![](CaseStudy2_files/figure-markdown_github/T20scatterplot-1.png)
 
-NA
+### Q3ii.a. Select a subset of data called "UStemp" where US land temperatures from 01/01/1990 in Temp data. Use UStemp dataset to answer the followings. Create a new column to display the monthly average land temperatures in Fahrenheit (°F).
 
 #### Using the data from 1900 to 2013 for average land temperatures only in the United States, we can convert the temperatures from degrees C to degrees F using the formula Temp (deg F) = Temp (deg C)\* 1.8 +32.
 
@@ -246,20 +292,20 @@ UStemp$Monthly.AverageTemp.degF<-(UStemp$Monthly.AverageTemp.degC*1.8)+32
 head(UStemp)
 ```
 
-    ##        Monthly.AverageTemp.degC Monthly.AverageTemp.Uncertainty
-    ## 110207                   -1.702                           0.206
-    ## 113557                    8.534                           0.103
-    ## 116909                    9.848                           0.201
-    ## 117050                   -2.286                           0.154
-    ## 117915                   21.690                           0.110
-    ## 118266                    2.504                           0.186
-    ##              Country       Date Monthly.AverageTemp.degF
-    ## 110207 United States 1934-12-01                  28.9364
-    ## 113557 United States 2009-10-01                  47.3612
-    ## 116909 United States 1933-10-01                  49.7264
-    ## 117050 United States 1972-02-01                  27.8852
-    ## 117915 United States 2008-07-01                  71.0420
-    ## 118266 United States 1986-11-01                  36.5072
+    ##      Monthly.AverageTemp.degC Monthly.AverageTemp.Uncertainty
+    ## 186                    -3.583                           0.213
+    ## 1064                   13.906                           0.159
+    ## 1297                   20.935                           0.424
+    ## 1428                   -0.453                           0.201
+    ## 1573                    2.073                           0.124
+    ## 1802                   -1.586                           0.122
+    ##            Country       Date Monthly.AverageTemp.degF
+    ## 186  United States 1974-01-01                  25.5506
+    ## 1064 United States 1997-05-01                  57.0308
+    ## 1297 United States 1967-07-01                  69.6830
+    ## 1428 United States 1982-12-01                  31.1846
+    ## 1573 United States 1980-03-01                  35.7314
+    ## 1802 United States 2008-02-01                  29.1452
 
 ### Q3ii.b. Calculate average land temperature by year and plot it. The original file has the average land temperature by month.
 
