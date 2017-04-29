@@ -6,7 +6,11 @@ Contributors: Georges Michel, Jack Nelson, Nicole Shaver, Nathan Tuttle
 
 # PURPOSE OF PROJECT
 
+<<<<<<< Updated upstream
 In this study we examine the relationship of age and circumference between orange trees grouped into five groups of ascending diameter. We will also look at land temperature across the United States and the world looking for short and long term trends.
+=======
+in this research we will examine the relationship between orange tree size and circumference.  we will also look at land size temperature across the United States and the world, look for short term and long term trends
+>>>>>>> Stashed changes
 
 # COPYRIGHT INFO
 
@@ -179,7 +183,11 @@ _Unused variables:_
 To reproduce the study download the project to the desired file path.  Open up the 
 command line on your machine.  Navigate to the file path the project was downloaded to
 in the command line.  Type 'make clean' in the command line.  Then type 'make all' in
+<<<<<<< Updated upstream
 the command line.  The remaining files along with the CaseStudy2.md
+=======
+the command line.  The remaining files along with the CaseStudy2.html
+>>>>>>> Stashed changes
 should be populated in the project's paper folder.
 
 # SESSIONINFO()
