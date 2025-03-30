@@ -1,6 +1,4 @@
-# TITLE
-
-Orange Trees and Land Temperature Data
+# Orange Trees and Land Temperature Data
 
 Contributors: Georges Michel, Jack Nelson, Nicole Shaver, Nathan Tuttle
 
